@@ -1,0 +1,52 @@
+# Deployment for Redis
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+spec:
+  replicas: 1 # Single instance for a single-node setup
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0.0 # Use a specific, stable version
+        ports:
+        - containerPort: 6379
+        volumeMounts: #added volumeMounts
+        - name: redis-data
+          mountPath: /data
+        #Added Liveness and Readiness Probes
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes: #added volumes
+      - name: redis-data
+        emptyDir: {}  # Use an emptyDir for simple, non-persistent storage
+---
+# Service for Redis
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+  type: ClusterIP # Use ClusterIP for internal cluster access
