@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: prometheus
-        image: prom/prometheus:latest # 使用最新稳定版本
+        image: prom/prometheus:v3.4.0
         ports:
         - containerPort: 9090
         volumeMounts:
@@ -195,7 +195,7 @@ spec:
       hostPID: true
       containers:
       - name: node-exporter
-        image: prom/node-exporter:latest # 使用最新稳定版本
+        image: prom/node-exporter:v1.9.1
         ports:
         - containerPort: 9100
           hostPort: 9100
